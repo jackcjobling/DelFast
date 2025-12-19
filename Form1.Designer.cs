@@ -34,6 +34,7 @@
             button2 = new Button();
             button3 = new Button();
             button4 = new Button();
+            button5 = new Button();
             SuspendLayout();
             // 
             // button1
@@ -45,7 +46,7 @@
             button1.TabIndex = 0;
             button1.Text = "Delete Folders";
             button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            button1.Click += btnDeleteFolder;
             // 
             // openFileDialog1
             // 
@@ -61,7 +62,7 @@
             button2.TabIndex = 3;
             button2.Text = "Select Folders";
             button2.UseVisualStyleBackColor = false;
-            button2.Click += button2_Click;
+            button2.Click += btnSelectFolder;
             // 
             // button3
             // 
@@ -73,7 +74,7 @@
             button3.TabIndex = 4;
             button3.Text = "Select Files";
             button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
+            button3.Click += btnSelectFiles;
             // 
             // button4
             // 
@@ -84,14 +85,25 @@
             button4.TabIndex = 5;
             button4.Text = "Delete Files";
             button4.UseVisualStyleBackColor = true;
-            button4.Click += button4_Click;
+            button4.Click += btnDeleteFiles;
+            // 
+            // button5
+            // 
+            button5.Location = new Point(12, 70);
+            button5.Name = "button5";
+            button5.Size = new Size(208, 23);
+            button5.TabIndex = 6;
+            button5.Text = "Generate Benchmark Files";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += btnGenerateBenchmarkFiles;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(34, 34, 34);
-            ClientSize = new Size(242, 80);
+            ClientSize = new Size(242, 110);
+            Controls.Add(button5);
             Controls.Add(button4);
             Controls.Add(button3);
             Controls.Add(button2);
@@ -110,5 +122,6 @@
         private Button button2;
         private Button button3;
         private Button button4;
+        private Button button5;
     }
 }
