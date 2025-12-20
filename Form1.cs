@@ -11,11 +11,11 @@ namespace DelFast
         {
             InitializeComponent();
             FormBorderStyle = FormBorderStyle.FixedSingle;
-            button1.Enabled = false;
-            button4.Enabled = false;
+            btnDelFolders.Enabled = false;
+            btnDeleteAllFiles.Enabled = false;
         }
 
-        private void btnSelectFolder(object sender, EventArgs e)
+        private void btnSelectFolderClick(object sender, EventArgs e)
         {
             using var folderBrowserDialog1 = new FolderBrowserDialog();
             folderBrowserDialog1.Description = "Select a folder to add to the list";
@@ -24,10 +24,10 @@ namespace DelFast
 
             _selectedFolders.Add(folderBrowserDialog1.SelectedPath);
             MessageBox.Show($"Added folder: {folderBrowserDialog1.SelectedPath}\nTotal folders: {_selectedFolders.Count}", "Folder Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            button1.Enabled = true;
+            btnDelFolders.Enabled = true;
         }
 
-        private void btnDeleteFolder(object sender, EventArgs e)
+        private void btnDeleteFolderClick(object sender, EventArgs e)
         {
             if (_selectedFolders.Count == 0) return;
 
@@ -43,26 +43,23 @@ namespace DelFast
             sw.Stop();
             MessageBox.Show($"Selected folders deleted successfully!\nTime elapsed: {sw.ElapsedMilliseconds} ms", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
             _selectedFolders.Clear();
-            button1.Enabled = false;
+            btnDelFolders.Enabled = false;
         }
 
-        private void btnSelectFiles(object sender, EventArgs e)
+        private void btnSelectFilesClick(object sender, EventArgs e)
         {
-            using var openFileDialog1 = new OpenFileDialog();
             openFileDialog1.Multiselect = true;
             openFileDialog1.Title = "Select files to delete";
             if (openFileDialog1.ShowDialog() != DialogResult.OK) 
                 return;
             
-            foreach (var file in openFileDialog1.FileNames)
-                if (!_selectedFiles.Contains(file))
-                    _selectedFiles.Add(file);
+            foreach (var file in openFileDialog1.FileNames) _selectedFiles.Add(file);
 
             MessageBox.Show($"Added {openFileDialog1.FileNames.Length} files.\nTotal files: {_selectedFiles.Count}", "Files Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            button4.Enabled = true;
+            btnDeleteAllFiles.Enabled = true;
         }
 
-        private void btnDeleteFiles(object sender, EventArgs e)
+        private void btnDeleteFilesClick(object sender, EventArgs e)
         {
             if (_selectedFiles.Count == 0) return;
 
@@ -80,10 +77,10 @@ namespace DelFast
             sw.Stop();
             MessageBox.Show($"Selected files deleted successfully!\nTime elapsed: {sw.ElapsedMilliseconds} ms", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
             _selectedFiles.Clear();
-            button4.Enabled = false;
+            btnDeleteAllFiles.Enabled = false;
         }
 
-        private void btnGenerateBenchmarkFiles(object sender, EventArgs e)
+        private void btnGenerateBenchmarkFilesClick(object sender, EventArgs e)
         {
             try
             {
@@ -115,7 +112,7 @@ namespace DelFast
                         File.WriteAllBytes(Path.Combine(subPath, $"file_{i}.bin"), data);
                 }
 
-                MessageBox.Show($"Created 300 1MB files in {baseDir}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Created 400 1MB files in {baseDir}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
