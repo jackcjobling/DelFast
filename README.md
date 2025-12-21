@@ -11,7 +11,7 @@ It is designed to be fast, simple, and portable.
 * Instant deletion of files and folders
 * Multi-select support (delete multiple items at once)
 * No installer, single EXE
-* Extremely small size (about 170 KB)
+* Extremely small size (about 188 KB)
 * Minimal CPU usage
 * Clean and simple UI
 * Permanent deletion (no Recycle Bin)
@@ -50,31 +50,12 @@ That’s it.
 
 ---
 
-## Security
-
-* No installer
-* No background services
-* No telemetry
-* No ads
-* No tracking
-
-You can inspect the source code to verify.
-
----
-
 ## Download
 
 Official website:
 https://delfastsite.web.app/
 
 ---
-
-## License
-
-Freeware
-
----
-
 ## Author
 
 Developed by Yali
