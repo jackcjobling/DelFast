@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36310.24 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DelFast", "DelFast\DelFast.csproj", "{D8B28F29-DEE9-4165-8120-14A03DB59F8E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DelFast", "DelFast.csproj", "{648A765C-B69E-DD0E-F81E-79CD7CCD7DAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D8B28F29-DEE9-4165-8120-14A03DB59F8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8B28F29-DEE9-4165-8120-14A03DB59F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8B28F29-DEE9-4165-8120-14A03DB59F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8B28F29-DEE9-4165-8120-14A03DB59F8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{648A765C-B69E-DD0E-F81E-79CD7CCD7DAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{648A765C-B69E-DD0E-F81E-79CD7CCD7DAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{648A765C-B69E-DD0E-F81E-79CD7CCD7DAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{648A765C-B69E-DD0E-F81E-79CD7CCD7DAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,112 +1,122 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 
 namespace DelFast
 {
     public partial class Form1 : Form
     {
-        private List<string> _selectedFolders = new List<string>();
-        private List<string> _selectedFiles = new List<string>();
+        private readonly HashSet<string> _selectedFolders = [];
+        private readonly HashSet<string> _selectedFiles = [];
 
         public Form1()
         {
             InitializeComponent();
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            button1.Enabled = false;
-            button4.Enabled = false;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            btnDelFolders.Enabled = false;
+            btnDeleteAllFiles.Enabled = false;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSelectFolderClick(object sender, EventArgs e)
         {
-            using (FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog())
-            {
-                folderBrowserDialog1.Description = "Select a folder to add to the list";
-                if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    _selectedFolders.Add(folderBrowserDialog1.SelectedPath);
-                    MessageBox.Show($"Added folder: {folderBrowserDialog1.SelectedPath}\nTotal folders: {_selectedFolders.Count}", "Folder Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    button1.Enabled = true;
-                }
-            }
+            using var folderBrowserDialog1 = new FolderBrowserDialog();
+            folderBrowserDialog1.Description = "Select a folder to add to the list";
+            if (folderBrowserDialog1.ShowDialog() != DialogResult.OK) 
+                return;
+
+            _selectedFolders.Add(folderBrowserDialog1.SelectedPath);
+            MessageBox.Show($"Added folder: {folderBrowserDialog1.SelectedPath}\nTotal folders: {_selectedFolders.Count}", "Folder Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            btnDelFolders.Enabled = true;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnDeleteFolderClick(object sender, EventArgs e)
         {
             if (_selectedFolders.Count == 0) return;
 
-            DialogResult result = MessageBox.Show($"Are you sure you want to delete {_selectedFolders.Count} folders?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            var result = MessageBox.Show($"Are you sure you want to delete {_selectedFolders.Count} folders?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-            if (result == DialogResult.Yes)
-            {
-                foreach (string folder in _selectedFolders)
-                {
-                    ExecuteCmd($"/C rd /s /q \"{folder}\"");
-                }
-                MessageBox.Show("Selected folders deleted successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                _selectedFolders.Clear();
-                button1.Enabled = false;
-            }
+            if (result != DialogResult.Yes) 
+                return;
+            
+            var sw = Stopwatch.StartNew();
+            foreach (var folder in _selectedFolders)
+                Directory.Delete(folder, recursive: true);
+
+            sw.Stop();
+            MessageBox.Show($"Selected folders deleted successfully!\nTime elapsed: {sw.ElapsedMilliseconds} ms", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            _selectedFolders.Clear();
+            btnDelFolders.Enabled = false;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnSelectFilesClick(object sender, EventArgs e)
         {
-            using (OpenFileDialog openFileDialog1 = new OpenFileDialog())
-            {
-                openFileDialog1.Multiselect = true;
-                openFileDialog1.Title = "Select files to delete";
-                if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    foreach (string file in openFileDialog1.FileNames)
-                    {
-                        if (!_selectedFiles.Contains(file))
-                        {
-                            _selectedFiles.Add(file);
-                        }
-                    }
-                    MessageBox.Show($"Added {openFileDialog1.FileNames.Length} files.\nTotal files: {_selectedFiles.Count}", "Files Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    button4.Enabled = true;
-                }
-            }
+            openFileDialog1.Multiselect = true;
+            openFileDialog1.Title = "Select files to delete";
+            if (openFileDialog1.ShowDialog() != DialogResult.OK) 
+                return;
+            
+            foreach (var file in openFileDialog1.FileNames) _selectedFiles.Add(file);
+
+            MessageBox.Show($"Added {openFileDialog1.FileNames.Length} files.\nTotal files: {_selectedFiles.Count}", "Files Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            btnDeleteAllFiles.Enabled = true;
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void btnDeleteFilesClick(object sender, EventArgs e)
         {
             if (_selectedFiles.Count == 0) return;
 
-            DialogResult result = MessageBox.Show($"Are you sure you want to delete {_selectedFiles.Count} files?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            var result = MessageBox.Show($"Are you sure you want to delete {_selectedFiles.Count} files?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-            if (result == DialogResult.Yes)
+            if (result != DialogResult.Yes) 
+                return;
+            var sw = Stopwatch.StartNew();
+            foreach (var file in _selectedFiles)
             {
-                foreach (string file in _selectedFiles)
-                {
-                    ExecuteCmd($"/C del /f /q \"{file}\"");
-                }
-                MessageBox.Show("Selected files deleted successfully!", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                _selectedFiles.Clear();
-                button4.Enabled = false;
+                // API Method
+                File.SetAttributes(file, FileAttributes.Normal); // optional
+                File.Delete(file);
             }
+            sw.Stop();
+            MessageBox.Show($"Selected files deleted successfully!\nTime elapsed: {sw.ElapsedMilliseconds} ms", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            _selectedFiles.Clear();
+            btnDeleteAllFiles.Enabled = false;
         }
 
-        private void ExecuteCmd(string arguments)
+        private void btnGenerateBenchmarkFilesClick(object sender, EventArgs e)
         {
             try
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo
+                var baseDir = Path.Combine(Directory.GetCurrentDirectory(), "BenchmarkFiles");
+                if (Directory.Exists(baseDir))
                 {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = "cmd.exe",
-                    Arguments = arguments
-                };
-                Process process = new Process { StartInfo = startInfo };
-                process.Start();
-                process.WaitForExit();
+                    var r = MessageBox.Show("BenchmarkFiles directory already exists. Delete it and recreate?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (r == DialogResult.Yes)
+                        Directory.Delete(baseDir, true);
+                    else
+                        return;
+                }
+
+                Directory.CreateDirectory(baseDir);
+
+                var data = new byte[1024 * 1024]; // 1MB
+                new Random().NextBytes(data);
+
+                for (var i = 0; i < 100; i++)
+                    File.WriteAllBytes(Path.Combine(baseDir, $"file_{i}.bin"), data);
+
+                var subDirs = new[] { "A", "B", "C" };
+                foreach (var sub in subDirs)
+                {
+                    var subPath = Path.Combine(baseDir, sub);
+                    Directory.CreateDirectory(subPath);
+
+                    for (var i = 0; i < 100; i++)
+                        File.WriteAllBytes(Path.Combine(subPath, $"file_{i}.bin"), data);
+                }
+
+                MessageBox.Show($"Created 400 1MB files in {baseDir}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error creating benchmark files: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
