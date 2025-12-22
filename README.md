@@ -54,10 +54,3 @@ That’s it.
 
 Official website:
 https://delfastsite.web.app/
-
----
-## Author
-
-Developed by Yali
-
----
