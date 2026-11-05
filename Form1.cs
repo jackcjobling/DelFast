@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using DelFast.Core;
 
 namespace DelFast
 {
@@ -27,7 +27,37 @@ namespace DelFast
             btnDelFolders.Enabled = true;
         }
 
-        private void btnDeleteFolderClick(object sender, EventArgs e)
+        private async Task DeleteAndReportAsync(IReadOnlyCollection<string> paths)
+        {
+            var title = Text;
+            Enabled = false;
+            Text = "Deleting...";
+            try
+            {
+                var targets = paths.ToArray();
+                var r = await Task.Run(() => FastDeleter.Delete(targets));
+                var summary = $"Deleted {r.Files:N0} files and {r.Directories:N0} folders\n" +
+                              $"Time elapsed: {r.Elapsed.TotalMilliseconds:N0} ms ({r.Threads} threads)";
+
+                if (r.Success)
+                {
+                    MessageBox.Show(summary, "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    var details = string.Join("\n\n", r.Failures.Take(5).Select(f => $"{f.Path}\n{f.Reason}"));
+                    MessageBox.Show($"{summary}\n\n{r.FailureCount:N0} item(s) could not be deleted:\n\n{details}",
+                        "Finished with errors", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            finally
+            {
+                Text = title;
+                Enabled = true;
+            }
+        }
+
+        private async void btnDeleteFolderClick(object sender, EventArgs e)
         {
             if (_selectedFolders.Count == 0) return;
 
@@ -36,12 +66,7 @@ namespace DelFast
             if (result != DialogResult.Yes) 
                 return;
             
-            var sw = Stopwatch.StartNew();
-            foreach (var folder in _selectedFolders)
-                Directory.Delete(folder, recursive: true);
-
-            sw.Stop();
-            MessageBox.Show($"Selected folders deleted successfully!\nTime elapsed: {sw.ElapsedMilliseconds} ms", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            await DeleteAndReportAsync(_selectedFolders);
             _selectedFolders.Clear();
             btnDelFolders.Enabled = false;
         }
@@ -59,7 +84,7 @@ namespace DelFast
             btnDeleteAllFiles.Enabled = true;
         }
 
-        private void btnDeleteFilesClick(object sender, EventArgs e)
+        private async void btnDeleteFilesClick(object sender, EventArgs e)
         {
             if (_selectedFiles.Count == 0) return;
 
@@ -67,15 +92,7 @@ namespace DelFast
 
             if (result != DialogResult.Yes) 
                 return;
-            var sw = Stopwatch.StartNew();
-            foreach (var file in _selectedFiles)
-            {
-                // API Method
-                File.SetAttributes(file, FileAttributes.Normal); // optional
-                File.Delete(file);
-            }
-            sw.Stop();
-            MessageBox.Show($"Selected files deleted successfully!\nTime elapsed: {sw.ElapsedMilliseconds} ms", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            await DeleteAndReportAsync(_selectedFiles);
             _selectedFiles.Clear();
             btnDeleteAllFiles.Enabled = false;
         }

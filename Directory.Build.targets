@@ -1,0 +1,12 @@
+<Project>
+
+  <!-- The SDK's default native compiler (10.0.5) is flagged by GHSA-p3jp-9v83-76w9, fixed in 10.0.14. -->
+  <Target Name="PinPatchedNativeCompiler" BeforeTargets="ProcessFrameworkReferences" Condition="'$(PublishAot)' == 'true'">
+    <ItemGroup>
+      <KnownILCompilerPack Update="Microsoft.DotNet.ILCompiler"
+                           Condition="'%(TargetFramework)' == 'net10.0'"
+                           ILCompilerPackVersion="10.0.14" />
+    </ItemGroup>
+  </Target>
+
+</Project>

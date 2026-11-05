@@ -2,6 +2,11 @@
 
 DelFast is a lightweight Windows utility for instantly deleting files and folders without the delays caused by Windows Explorer calculations and animations.
 
+> **This fork** replaces the single-threaded `Directory.Delete` with a parallel native engine (`Core/FastDeleter.cs`) and adds a command line tool: `dfast <path> [path...] [-y] [-t threads]`.
+> Measured about 3x to 5x faster than the original (`Bench/`, run `dfast-bench selftest` and `dfast-bench bench`).
+> Junctions and symlinks are removed as links and never followed. Drive roots, Windows and profile folders are refused.
+> Install with `.\install.ps1` (no admin; remove with `-Uninstall`): `dfast` on PATH plus an Explorer right-click entry with one confirmation per selection. Building needs the .NET SDK and Visual Studio C++ tools. `dfast` and the right-click tool are native and need no runtime; the window app needs the .NET 10 Desktop Runtime.
+
 It is designed to be fast, simple, and portable.
 
 ---
